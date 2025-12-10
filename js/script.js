@@ -111,6 +111,25 @@
     });
   }
 
+  // init header active link based on current page
+  var initHeaderActive = function() {
+    try {
+      var path = window.location.pathname.split('/').pop();
+      if (!path) path = 'index.html';
+      $('a.nav-link, .menu-list a').each(function() {
+        var href = $(this).attr('href');
+        if (!href) return;
+        var hrefFile = href.split('/').pop();
+        if (hrefFile === path) {
+          $('a.nav-link').removeClass('active');
+          $(this).addClass('active');
+        }
+      });
+    } catch (e) {
+      // fail silently
+    }
+  }
+
   // Cart management system
   var CartManager = {
     cartItems: [],
@@ -226,7 +245,7 @@
         '<strong>$' + total.toFixed(2) + '</strong>' +
         '</li>' +
         '<li class="list-group-item">' +
-        '<button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>' +
+        '<a href="checkout.html" class="w-100 btn btn-primary btn-lg text-center">Continue to checkout</a>' +
         '</li>';
       cartList.append(totalHtml);
 
@@ -285,6 +304,7 @@
     initProductQty();
     initJarallax();
     initChocolat();
+    initHeaderActive();
     CartManager.init();
 
         // product single page

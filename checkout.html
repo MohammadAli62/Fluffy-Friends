@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout - Fluffy Friends</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="container my-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Checkout</h1>
+        <a href="index.html" class="btn btn-outline-secondary">Continue Shopping</a>
+      </div>
+
+      <div class="row">
+        <div class="col-md-7">
+          <h4 class="mb-3">Payment Method</h4>
+
+          <div class="mb-4">
+            <h5>Credit / Debit Card</h5>
+            <form id="card-form">
+              <div class="mb-3">
+                <label class="form-label">Name on card</label>
+                <input type="text" class="form-control" id="card-name" placeholder="Full name" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Card number</label>
+                <input type="text" class="form-control" id="card-number" placeholder="xxxx xxxx xxxx xxxx" required>
+              </div>
+              <div class="row">
+                <div class="col-6 mb-3">
+                  <label class="form-label">Expiry</label>
+                  <input type="text" class="form-control" id="card-expiry" placeholder="MM/YY" required>
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="form-label">CVC</label>
+                  <input type="text" class="form-control" id="card-cvc" placeholder="CVC" required>
+                </div>
+              </div>
+              <button id="pay-card" class="btn btn-primary">Pay with Card</button>
+            </form>
+          </div>
+
+          <div class="mb-4">
+            <h5>PayPal</h5>
+            <p>Use your PayPal account to pay securely.</p>
+            <a id="paypal-btn" href="#" class="btn btn-info">Pay with PayPal</a>
+          </div>
+
+          <div class="mb-4">
+            <h5>Cash on Delivery</h5>
+            <p>Pay with cash when the order is delivered.</p>
+            <button id="cod-btn" class="btn btn-secondary">Confirm Cash on Delivery</button>
+          </div>
+        </div>
+
+        <div class="col-md-5">
+          <h4 class="mb-3">Order Summary</h4>
+          <ul id="order-items" class="list-group mb-3"></ul>
+          <div class="d-flex justify-content-between mb-3">
+            <strong>Total</strong>
+            <strong id="order-total">$0.00</strong>
+          </div>
+          <div id="order-message"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script>
+      (function(){
+        function loadCart() {
+          var stored = localStorage.getItem('waggy_cart');
+          return stored ? JSON.parse(stored) : [];
+        }
+
+        function renderOrder() {
+          var items = loadCart();
+          var list = $('#order-items');
+          list.empty();
+          var total = 0;
+          if (items.length === 0) {
+            list.append('<li class="list-group-item text-center text-muted">Your cart is empty</li>');
+          } else {
+            items.forEach(function(it){
+              var subtotal = it.price * it.quantity;
+              total += subtotal;
+              list.append('<li class="list-group-item d-flex justify-content-between align-items-center">' +
+                '<div><strong>' + it.name + '</strong><div class="text-muted">Qty: ' + it.quantity + '</div></div>' +
+                '<span>$' + subtotal.toFixed(2) + '</span>' +
+                '</li>');
+            });
+          }
+          $('#order-total').text('$' + total.toFixed(2));
+          return {items: items, total: total};
+        }
+
+        function clearCart(){
+          localStorage.removeItem('waggy_cart');
+        }
+
+        $(function(){
+          renderOrder();
+
+          $('#card-form').on('submit', function(e){
+            e.preventDefault();
+            // basic client-side validation
+            if (!$('#card-name').val() || !$('#card-number').val()) {
+              alert('Please fill all required card fields.');
+              return;
+            }
+            $('#order-message').html('<div class="alert alert-success">Payment successful (simulated). Thank you!</div>');
+            clearCart();
+            renderOrder();
+          });
+
+          $('#paypal-btn').on('click', function(e){
+            e.preventDefault();
+            $('#order-message').html('<div class="alert alert-info">Redirecting to PayPal (simulated)...</div>');
+            setTimeout(function(){
+              $('#order-message').html('<div class="alert alert-success">PayPal payment successful (simulated). Thank you!</div>');
+              clearCart();
+              renderOrder();
+            }, 1200);
+          });
+
+          $('#cod-btn').on('click', function(){
+            $('#order-message').html('<div class="alert alert-success">Cash on Delivery confirmed. We will contact you to confirm delivery details.</div>');
+            clearCart();
+            renderOrder();
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
