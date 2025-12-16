@@ -366,6 +366,40 @@
         }
       });
 
+      // Shop by Category select change handler
+      $('.filter-categories').on('change', function () {
+        var val = $(this).val();
+        var filter = '*';
+
+        if (val === 'Clothes') {
+          filter = '.clothes';
+          if ($('#clothing').length) {
+            $('html, body').animate({ scrollTop: $('#clothing').offset().top - 80 }, 600);
+          }
+        } else if (val === 'Food') {
+          filter = '.dog, .cat, .bird';
+          if ($('#foodies').length) {
+            $('html, body').animate({ scrollTop: $('#foodies').offset().top - 80 }, 600);
+          }
+        } else if (val === 'Toy') {
+          filter = '.toy';
+          if ($('#clothing').length) {
+            $('html, body').animate({ scrollTop: $('#clothing').offset().top - 80 }, 600);
+          }
+        } else {
+          filter = '*';
+        }
+
+        try {
+          $container.isotope({ filter: filter });
+        } catch (e) {
+          // isotope may not be initialized or filter selector not present
+        }
+
+        // remove active state from filter buttons
+        $('.filter-button').removeClass('active');
+      });
+
     });
 
   }); // End of a document
